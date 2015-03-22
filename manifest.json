@@ -1,6 +1,22 @@
 {
-  "manifest_version": 2,
-  "name": "JIRA Issue Viewer",
-  "version": "0.1",
-  "omnibox": { "keyword" : "JIRA" }
+	"manifest_version": 2,
+	"name": "JIRA Issue Viewer",
+	"version": "0.1",
+	"omnibox": {"keyword" : "JIRA"},
+
+	"background": {
+		"persistent": false,
+		"scripts": [
+			"omnibox.js"]
+	},
+	"permissions": [
+		"http://*/",
+		"https://*/",
+		"storage"
+	],
+	"options_page": "options.html",
+	"options_ui": {
+		"page": "options.html",
+		"chrome_style": true
+  }
 }
