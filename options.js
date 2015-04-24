@@ -19,6 +19,8 @@ function saveOptions() {
 }
 
 function restoreOptions() {
+  //document.getElementById('test').addEventListener('click', runInstall);
+
   chrome.storage.sync.get({
       baseUrl: ''
     }, 
