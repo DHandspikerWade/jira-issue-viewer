@@ -1,7 +1,7 @@
 {
 	"manifest_version": 2,
 	"name": "JIRA Issue Viewer",
-	"version": "0.3.1",
+	"version": "1.4.0",
 	"omnibox": {"keyword" : "JIRA"},
 
 	"background": {
@@ -9,13 +9,15 @@
 		"scripts": [
 			"common.js",
 			"omnibox.js",
-			"runtime.js"
+			"runtime.js",
+			"tabs.js"
 		]
 	},
 	"permissions": [
 		"http://*/",
 		"https://*/",
-		"storage"
+		"storage",
+		"tabs"
 	],
 	"options_page": "options.html",
 	"options_ui": {
