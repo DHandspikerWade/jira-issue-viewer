@@ -17,7 +17,8 @@
 		"http://*/",
 		"https://*/",
 		"storage",
-		"tabs"
+		"tabs",
+        "notifications"
 	],
 	"options_page": "options.html",
 	"options_ui": {
