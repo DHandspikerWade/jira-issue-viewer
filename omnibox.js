@@ -5,19 +5,20 @@ chrome.omnibox.onInputChanged.addListener(function(aText, aSuggest) {
 	clearTimeout(_jiraViewer.timeoutId);
 
 	_jiraViewer.timeoutId = setTimeout(function() {
-		getDatabase().transaction(function (aTrans) {
-			aTrans.executeSql('SELECT issue_key, summary FROM `issue` WHERE issue_key LIKE "%" || ? || "%" ORDER BY updated_datetime DESC LIMIT 5;',[aText], function(aTrans, aResults) {
-				var len = aResults.rows.length, i, suggestions = [];
-				for (i = 0; i < len; i++) {
-					suggestions.push({
-						'content': aResults.rows.item(i).issue_key,
-						'description': aResults.rows.item(i).issue_key + ': ' + aResults.rows.item(i).summary
-					});
-				}
+		getDatabase().query('SELECT issue_key, summary FROM `issue` WHERE issue_key LIKE "%" || ? || "%" ORDER BY updated_datetime DESC LIMIT 5;',[aText], function(aTrans, aResults) {
+			var len = aResults.rows.length, 
+                i, 
+                suggestions = [];
 
-				aSuggest(suggestions);
-			}, sqlError);
-		});
+			for (i = 0; i < len; i++) {
+				suggestions.push({
+					'content': aResults.rows.item(i).issue_key,
+					'description': aResults.rows.item(i).issue_key + ': ' + aResults.rows.item(i).summary
+				});
+			}
+
+			aSuggest(suggestions);
+		}, sqlError);
 	}, 400);
 });
 

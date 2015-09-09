@@ -1,4 +1,4 @@
-chrome.runtime.onInstalled.addListener(runInstall);
+//chrome.runtime.onInstalled.addListener(runInstall);
 
 chrome.runtime.onMessage.addListener(function(aRequest, aSender, aSendResponse) {
 	if ('type' in aRequest) {
