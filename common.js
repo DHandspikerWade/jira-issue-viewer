@@ -24,7 +24,7 @@ var getDatabase = (function() {
         if (dbInstance === null) {
             var initialize = function (aTrans) {
                 //Create tables
-                aTrans.executeSql('CREATE TABLE IF NOT EXISTS `issue` ( `id`    INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, `issue_key` TEXT NOT NULL, `summary` TEXT, `jira_site_id` INTEGER NOT NULL, `updated_datetime` DATETIME NOT NULL);');
+                aTrans.executeSql('CREATE TABLE IF NOT EXISTS `issue` ( `id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, `issue_key` TEXT NOT NULL, `summary` TEXT, `jira_site_id` INTEGER NOT NULL, `updated_datetime` DATETIME NOT NULL);');
                 aTrans.executeSql('CREATE TABLE IF NOT EXISTS`jira_site` (`id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, `url` TEXT NOT NULL);');
             };
 
@@ -70,7 +70,7 @@ chrome.storage.onChanged.addListener(function(changes, namespace) {
 	}
 });
 
-function addToHistory(aIssue, aOldIssue) {
+function addToHistory(aIssue, aOldIssue, aScraped) {
 	if (!aOldIssue) aOldIssue = aIssue; //Fallback
 
 	setTimeout(function() {
@@ -79,14 +79,16 @@ function addToHistory(aIssue, aOldIssue) {
             var db = getDatabase();
 
                 db.query('SELECT id FROM `issue` WHERE issue_key = ?;', [key], function (aTrans, aResults) {
+                	var datetimeSql = (aScraped) ? "DateTime(0, 'unixepoch')": 'DateTime("now")';
+
                     if (aResults.rows.length < 1) {
-                        aTrans.executeSql('INSERT INTO `issue` (`issue_key`, `summary`, `jira_site_id`, `updated_datetime`) VALUES (?, ?, ?, DateTime("now"))', [
+                        aTrans.executeSql('INSERT INTO `issue` (`issue_key`, `summary`, `jira_site_id`, `updated_datetime`) VALUES (?, ?, ?, ' + datetimeSql + ')', [
                             key,
                             aIssue.fields.summary,
                             _jiraViewer.jiraSiteId
                         ], function () {
                         }, sqlError);
-                    } else if (aResults.rows.length == 1) {
+                    } else if (aResults.rows.length == 1 && !aScraped) {
                         aTrans.executeSql('UPDATE `issue` SET `issue_key` = ?, `summary` = ?, `jira_site_id` = ?, `updated_datetime` = DateTime("now") WHERE id = ?;', [
                             key,
                             aIssue.fields.summary,
