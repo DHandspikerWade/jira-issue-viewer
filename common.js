@@ -103,6 +103,18 @@ function addToHistory(aIssue, aOldIssue, aScraped) {
 	}, 10);
 }
 
+function escapeXml(aUnsafe) {
+    return aUnsafe.replace(/[<>&'"]/g, function (aChar) {
+        switch (aChar) {
+            case '<': return '&lt;';
+            case '>': return '&gt;';
+            case '&': return '&amp;';
+            case '\'': return '&apos;';
+            case '"': return '&quot;';
+        }
+    });
+}
+
 function handleError(aException, aData) {
     var notificationId = 'jira-viewer' + Date.now();
     var notification = {

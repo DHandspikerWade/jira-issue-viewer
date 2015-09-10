@@ -1,5 +1,6 @@
 
-chrome.omnibox.onInputChanged.addListener(function(aText, aSuggest) {
+chrome.omnibox.onInputChanged.addListener(function (aText, aSuggest) {
+    aText = aText.trim();
 	chrome.omnibox.setDefaultSuggestion({"description" : "Search Jira for " + aText});
 
 	clearTimeout(_jiraViewer.timeoutId);
@@ -7,13 +8,25 @@ chrome.omnibox.onInputChanged.addListener(function(aText, aSuggest) {
 	_jiraViewer.timeoutId = setTimeout(function() {
 		getDatabase().query('SELECT issue_key, summary FROM `issue` WHERE issue_key LIKE "%" || ? || "%" ORDER BY updated_datetime DESC LIMIT 5;',[aText], function(aTrans, aResults) {
 			var len = aResults.rows.length, 
-                i, 
+                i, description, position, issue_key,
                 suggestions = [];
 
 			for (i = 0; i < len; i++) {
+                issue_key = escapeXml(aResults.rows.item(i).issue_key);
+                position = issue_key.toLowerCase().indexOf(aText.toLowerCase());
+
+                if (position > -1) {
+                    issue_key = issue_key.substring(0, position) 
+                        + '<match>' + issue_key.substring(position, position + aText.length) + '</match>'
+                        + issue_key.substring(position + aText.length);
+                }
+
+                description = issue_key + ': ';
+                description += '<dim>' + escapeXml(aResults.rows.item(i).summary) + '</dim>';
+
 				suggestions.push({
 					'content': aResults.rows.item(i).issue_key,
-					'description': aResults.rows.item(i).issue_key + ': ' + aResults.rows.item(i).summary
+					'description': description
 				});
 			}
 
