@@ -1,23 +1,47 @@
 
-chrome.omnibox.onInputChanged.addListener(function(aText, aSuggest) {
-	chrome.omnibox.setDefaultSuggestion({"description" : "Search Jira for " + aText});
+chrome.omnibox.onInputChanged.addListener(function (aText, aSuggest) {
+    aText = aText.trim();
+	chrome.omnibox.setDefaultSuggestion({"description" : 'Search Jira for "' + aText + '"'});
 
 	clearTimeout(_jiraViewer.timeoutId);
 
 	_jiraViewer.timeoutId = setTimeout(function() {
-		getDatabase().transaction(function (aTrans) {
-			aTrans.executeSql('SELECT issue_key, summary FROM `issue` WHERE issue_key LIKE "%" || ? || "%" ORDER BY updated_datetime DESC LIMIT 5;',[aText], function(aTrans, aResults) {
-				var len = aResults.rows.length, i, suggestions = [];
-				for (i = 0; i < len; i++) {
-					suggestions.push({
-						'content': aResults.rows.item(i).issue_key,
-						'description': aResults.rows.item(i).issue_key + ': ' + aResults.rows.item(i).summary
-					});
-				}
+		getDatabase().query('SELECT issue_key, summary FROM `issue` WHERE issue_key LIKE "%" || ? || "%" OR summary LIKE "%" || ? || "%" ORDER BY updated_datetime DESC LIMIT 5;',[aText, aText], function(aTrans, aResults) {
+			var len = aResults.rows.length, 
+                i, description, position, issue_key, summary,
+                suggestions = [];
 
-				aSuggest(suggestions);
-			}, sqlError);
-		});
+			for (i = 0; i < len; i++) {
+                summary = escapeXml(aResults.rows.item(i).summary);
+                issue_key = escapeXml(aResults.rows.item(i).issue_key);
+                
+                position = issue_key.toLowerCase().indexOf(aText.toLowerCase());
+
+                if (position > -1) {
+                    issue_key = issue_key.substring(0, position) 
+                        + '<match>' + issue_key.substring(position, position + aText.length) + '</match>'
+                        + issue_key.substring(position + aText.length);
+                }
+
+                position = summary.toLowerCase().indexOf(aText.toLowerCase());
+
+                if (position > -1) {
+                    summary = summary.substring(0, position) 
+                        + '<match>' + summary.substring(position, position + aText.length) + '</match>'
+                        + summary.substring(position + aText.length);
+                }
+
+                description = issue_key + ': ';
+                description += '<dim>' + summary + '</dim>';
+
+				suggestions.push({
+					'content': aResults.rows.item(i).issue_key,
+					'description': description
+				});
+			}
+
+			aSuggest(suggestions);
+		}, sqlError);
 	}, 400);
 });
 
@@ -52,7 +76,7 @@ function redirectToJira(aText) {
                         if (response.errorMessages && response.errorMessages.length) {
                             handleError(new Exception('Jira returned errors.'), {errorMessages: response.errorMessages});
                         } else {
-                            chrome.tabs.update({url: _jiraViewer.baseUrl + 'browse/' + aText});
+                            chrome.tabs.update({url: _jiraViewer.baseUrl + 'browse/' + response.key});
                             addToHistory(response);
                         }
                     }
