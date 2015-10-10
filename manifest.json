@@ -4,6 +4,9 @@
 	"version": "1.6.1",
 	"version_name": "1.6.1",
 	"omnibox": {"keyword" : "JIRA"},
+	"icons": {
+		"128": "cyan_charlie.png"
+	},
 
 	"background": {
 		"persistent": false,
