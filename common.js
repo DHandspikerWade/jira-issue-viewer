@@ -7,6 +7,18 @@ var _jiraViewer = window._jiraViewer || {
     'errors': {}
 };
 
+//Load google Analytics
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-68632843-2', 'auto');
+ga('set', 'checkProtocolTask', function(){}); // Removes failing protocol check. @see: http://stackoverflow.com/a/22152353/1958200
+ga('set', {
+    'appName': 'Chrome Jira Issue Viewer',
+});
+
 chrome.storage.sync.get('baseUrl', function(aData) {
 	var db = getDatabase();
 	_jiraViewer.baseUrl = aData.baseUrl;
@@ -39,6 +51,8 @@ var getDatabase = (function() {
 
 var isDebug = (function() {
     var status = !('update_url' in chrome.runtime.getManifest());
+
+     ga('set','appVersion',  chrome.runtime.getManifest().version + (status ? ' (Debug)' : ''));
 
     return function() {
         return status;
@@ -87,6 +101,7 @@ function addToHistory(aIssue, aOldIssue, aScraped) {
                             aIssue.fields.summary,
                             _jiraViewer.jiraSiteId
                         ], function () {
+                            ga('send', 'event', 'Search', 'Found New Issue');
                         }, sqlError);
                     } else if (aResults.rows.length == 1 && !aScraped) {
                         aTrans.executeSql('UPDATE `issue` SET `issue_key` = ?, `summary` = ?, `jira_site_id` = ?, `updated_datetime` = DateTime("now") WHERE id = ?;', [
@@ -116,6 +131,10 @@ function escapeXml(aUnsafe) {
 }
 
 function handleError(aException, aData) {
+    ga('send', 'exception', {
+        'exDescription': aException.message
+    });
+
     var notificationId = 'jira-viewer' + Date.now();
     var notification = {
         type: 'basic',
