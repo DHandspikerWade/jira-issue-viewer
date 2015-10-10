@@ -18,7 +18,7 @@ chrome.runtime.onMessage.addListener(function(aRequest, aSender, aSendResponse) 
                 };
 
                 xhr.send();
-            }
+            };
 
             if (aRequest.visited) {
                 updateHistory();

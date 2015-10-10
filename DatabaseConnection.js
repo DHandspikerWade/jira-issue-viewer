@@ -16,18 +16,18 @@ function DatabaseConnection (aDatabase, aInitializeCallback, aDescription, aSize
 				if (aUpgradeCallback && typeof aUpgradeCallback == 'function') {
 					aUpgradeCallback(cSelf, db.version);
 				} else {
-					console.warn('No callback provided to upgrade database.')
+					console.warn('No callback provided to upgrade database.');
 				}
 			}, function () {
-				throw "Database upgrade failed."
+				throw "Database upgrade failed.";
 			}, function () {
 				if (aUpgradeCallback && typeof aUpgradeCallback == 'function')
-					console.debug('Database is upgrading.')
+					console.debug('Database is upgrading.');
 			});
 		}
 
 		return this;
-	}
+	};
 
 	this.query = function (aSql, aParameters, aSuccess, aFailed) {
 		if (isReady && !upgrading) {
@@ -56,7 +56,7 @@ function DatabaseConnection (aDatabase, aInitializeCallback, aDescription, aSize
 
 			if (!upgrading) {
 				isReady = true;
-				for (index in quene) {
+				for (var index in quene) {
 					aTrans.executeSql(quene[index].sql, quene[index].parameters, quene[index].success, quene[index].failed);
 					delete quene[index];
 				}

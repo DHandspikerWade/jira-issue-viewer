@@ -46,7 +46,7 @@ var getDatabase = (function() {
         }
 
         return dbInstance;
-    }
+    };
 })();
 
 var isDebug = (function() {

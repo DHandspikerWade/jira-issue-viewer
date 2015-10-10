@@ -3,7 +3,7 @@ if (!window.location.hash) {
 }
 
 chrome.runtime.sendMessage({type: 'BUG_REPORT', notificationId: window.location.hash.substring(1)}, function(aResponse) {
-    if (aResponse == null) {
+    if (!aResponse) {
         window.close();
         return;
     }
