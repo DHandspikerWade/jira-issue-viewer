@@ -1,3 +1,8 @@
+chrome.omnibox.onInputStarted.addListener(function() {
+    chrome.omnibox.setDefaultSuggestion({"description" : 'Search Jira'});
+
+    ga('send', 'screenview', {screenName: 'Search'});
+});
 
 chrome.omnibox.onInputChanged.addListener(function (aText, aSuggest) {
     aText = aText.trim();
@@ -76,6 +81,7 @@ function redirectToJira(aText) {
                         if (response.errorMessages && response.errorMessages.length) {
                             handleError(new Exception('Jira returned errors.'), {errorMessages: response.errorMessages});
                         } else {
+                            ga('send', 'event', 'Search', 'Navigate');
                             chrome.tabs.update({url: _jiraViewer.baseUrl + 'browse/' + response.key});
                             addToHistory(response);
                         }
