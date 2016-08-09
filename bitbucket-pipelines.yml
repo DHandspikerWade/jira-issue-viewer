@@ -5,7 +5,6 @@ pipelines:
       develop:
         - step:
             script: # Modify the commands below to build your repository.
-              - sed -i 's/\"name\": \"[^\"]*\",/"name": "JIRA Issue Viewer - Beta",/'  source/manifest.json && sed -i 's,\"version\": \"[^\"]*\"\,,\"version\": \"'"$(date +"%-Y.%-m.%-d.9%-H%M")"'\"\,,g'  source/manifest.json && sed -i 's,\"version_name\": \"[^\"]*\"\,,\"version_name\": \"'"$BITBUCKET_COMMIT"'\"\,,g'  source/manifest.json
               - mkdir source
               - mv * source
               - zip -FS dist.zip  source/*
