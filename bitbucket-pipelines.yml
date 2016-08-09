@@ -1,14 +1,15 @@
 image: node:5.11.0
 
 pipelines:
-  develop:
-    - step:
-        script: # Modify the commands below to build your repository.
-          - sed -i 's/\"name\": \"[^\"]*\",/"name": "JIRA Issue Viewer - Beta",/'  source/manifest.json && sed -i 's,\"version\": \"[^\"]*\"\,,\"version\": \"'"$(date +"%-Y.%-m.%-d.9%-H%M")"'\"\,,g'  source/manifest.json && sed -i 's,\"version_name\": \"[^\"]*\"\,,\"version_name\": \"'"$BITBUCKET_COMMIT"'\"\,,g'  source/manifest.json
-          - mkdir source
-          - mv * source
-          - zip -FS dist.zip  source/*
-          - npm install chrome-webstore-manager || npm update chrome-webstore-manager
-          - WEBSTORE_TOKEN=$(nodejs node_modules/chrome-webstore-manager/dist/index.js refresh_token --client_id "$CLIENT_ID" --client_secret "$CLIENT_SECRET" --refresh_token "$REFRESH_TOKEN")
-          - nodejs node_modules/chrome-webstore-manager/dist/index.js update --token $WEBSTORE_TOKEN $DEV_APP_ID ./dist.zip
-          - nodejs node_modules/chrome-webstore-manager/dist/index.js publish --token $WEBSTORE_TOKEN --target trustedTesters $DEV_APP_ID
+  branches:
+      develop:
+        - step:
+            script: # Modify the commands below to build your repository.
+              - sed -i 's/\"name\": \"[^\"]*\",/"name": "JIRA Issue Viewer - Beta",/'  source/manifest.json && sed -i 's,\"version\": \"[^\"]*\"\,,\"version\": \"'"$(date +"%-Y.%-m.%-d.9%-H%M")"'\"\,,g'  source/manifest.json && sed -i 's,\"version_name\": \"[^\"]*\"\,,\"version_name\": \"'"$BITBUCKET_COMMIT"'\"\,,g'  source/manifest.json
+              - mkdir source
+              - mv * source
+              - zip -FS dist.zip  source/*
+              - npm install chrome-webstore-manager || npm update chrome-webstore-manager
+              - WEBSTORE_TOKEN=$(nodejs node_modules/chrome-webstore-manager/dist/index.js refresh_token --client_id "$CLIENT_ID" --client_secret "$CLIENT_SECRET" --refresh_token "$REFRESH_TOKEN")
+              - nodejs node_modules/chrome-webstore-manager/dist/index.js update --token $WEBSTORE_TOKEN $DEV_APP_ID ./dist.zip
+              - nodejs node_modules/chrome-webstore-manager/dist/index.js publish --token $WEBSTORE_TOKEN --target trustedTesters $DEV_APP_ID
