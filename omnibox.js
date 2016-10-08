@@ -11,7 +11,7 @@ chrome.omnibox.onInputChanged.addListener(function (aText, aSuggest) {
 	clearTimeout(_jiraViewer.timeoutId);
 
 	_jiraViewer.timeoutId = setTimeout(function() {
-		getDatabase().query('SELECT issue_key, summary FROM `issue` WHERE issue_key LIKE "%" || ? || "%" OR summary LIKE "%" || ? || "%" ORDER BY updated_datetime DESC LIMIT 5;',[aText, aText], function(aTrans, aResults) {
+		getDatabase().query('SELECT issue_key, summary FROM `issue` WHERE issue_key LIKE "%" || ? || "%" OR summary LIKE "%" || ? || "%" ORDER BY updated_datetime DESC LIMIT 10;',[aText, aText], function(aTrans, aResults) {
 			var len = aResults.rows.length, 
                 i, description, position, issue_key, summary,
                 suggestions = [];
