@@ -1,13 +1,11 @@
 (function () {	
-	var elements = document.getElementsByName('ajs-issue-key');
+	var elements = document.querySelectorAll('.issue-header .issue-link[data-issue-key]');
   	var i;
 	
 	if (elements) {
 		for (i = 0;  i < elements.length; i++) {
-			if (elements[i].tagName.toUpperCase() == 'META') {
-				chrome.runtime.sendMessage({ type: "JIRA_ISSUE", key: elements[i].content, visited: true});
-				break;
-			}
+			chrome.runtime.sendMessage({ type: "JIRA_ISSUE", key: elements[i]..dataset.issueKey, visited: true});
+			break;
 		}
 	}
 
