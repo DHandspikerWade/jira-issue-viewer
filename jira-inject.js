@@ -1,12 +1,11 @@
 (function () {	
-	var elements = document.getElementsByName('ajs-issue-key');
-  var i;
+	var elements = document.querySelectorAll('.issue-header .issue-link[data-issue-key]');
+  	var i;
+	
 	if (elements) {
 		for (i = 0;  i < elements.length; i++) {
-			if (elements[i].tagName.toUpperCase() == 'META') {
-				chrome.runtime.sendMessage({ type: "JIRA_ISSUE", key: elements[i].content, visited: true});
-				break;
-			}
+			chrome.runtime.sendMessage({ type: "JIRA_ISSUE", key: elements[i]..dataset.issueKey, visited: true});
+			break;
 		}
 	}
 
@@ -16,4 +15,20 @@
 			chrome.runtime.sendMessage({ type: "JIRA_ISSUE", key: elements[i].dataset.issueKey, visited: false});
 		}
 	}
+	
+	elements = document.querySelectorAll('body[class*="ghx-plan-band"] .ghx-issue-content .js-key-link');
+	if (elements.length) {
+		for (i = 0; i < elements.length; i++) {
+			chrome.runtime.sendMessage({ type: "JIRA_ISSUE", key: elements[i].title, visited: false});
+		}
+	}
+	
+	setInterval(function() {
+		elements = document.querySelectorAll('body[class*="ghx-plan-band"] .ghx-detail-view .ghx-detail-issue');
+		if (elements.length) {
+			for (i = 0; i < elements.length; i++) {
+				chrome.runtime.sendMessage({ type: "JIRA_ISSUE", key: elements[i].dataset.issuekey, visited: true});
+			}
+		}
+	}, 15000);
 })();

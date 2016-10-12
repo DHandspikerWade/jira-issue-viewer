@@ -1,7 +1,9 @@
 //chrome.runtime.onInstalled.addListener(runInstall);
-
+var last_added;
 chrome.runtime.onMessage.addListener(function(aRequest, aSender, aSendResponse) {
 	if ('type' in aRequest) {
+		console.debug('Recieved: ' + aRequest.key + ' Visted: ' + (aRequest.visited ? 'Yes' : 'No'));
+		
         if (aRequest.type == 'JIRA_ISSUE') {
             var updateHistory = function () {
                 var xhr = new XMLHttpRequest();
@@ -21,7 +23,10 @@ chrome.runtime.onMessage.addListener(function(aRequest, aSender, aSendResponse) 
             };
 
             if (aRequest.visited) {
-                updateHistory();
+				if (last_added != aRequest.key) {
+					last_added = aRequest.key;
+					updateHistory();
+				}
             } else {
                 getDatabase().query('SELECT id FROM `issue` WHERE `issue_key` = ? LIMIT 1', [aRequest.key], function (aTrans, aResults) {
                     if (!aResults.rows.length) {
