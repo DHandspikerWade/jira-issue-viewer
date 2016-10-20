@@ -4,7 +4,7 @@
 	
 	if (elements) {
 		for (i = 0;  i < elements.length; i++) {
-			chrome.runtime.sendMessage({ type: "JIRA_ISSUE", key: elements[i]..dataset.issueKey, visited: true});
+			chrome.runtime.sendMessage({ type: "JIRA_ISSUE", key: elements[i].dataset.issueKey, visited: true});
 			break;
 		}
 	}
