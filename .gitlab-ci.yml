@@ -10,5 +10,3 @@ code lint:
   stage: lint
   script:
     - npx tslint -c tslint.json -p tsconfig.json 'src/**/*.ts'
-  only:
-    - TS-2.0
