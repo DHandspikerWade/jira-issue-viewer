@@ -1,0 +1,20 @@
+{
+    "defaultSeverity": "error",
+    "extends": [
+        "tslint:recommended"
+    ],
+    "jsRules": {},
+    "rules": {
+        "quotemark": {
+            "severity" : "warning",
+            "options": ["single", "avoid-escape", "avoid-template"]
+        },
+        "no-empty": {
+            "severity": "warning"
+        },
+        "no-trailing-whitespace": {
+            "severity": "warning"
+        }
+    },
+    "rulesDirectory": []
+}
