@@ -12,8 +12,40 @@ before_script:
 
 stages:
   - lint
+  - build
 
 code lint:
   stage: lint
   script:
     - npx tslint -c tslint.json -p tsconfig.json 'src/**/*.ts'
+
+Build Chrome Extension:
+  stage: build
+  artifacts:
+    name: "${CI_COMMIT_REF_SLUG}_${CI_COMMIT_REF_NAME}"
+    untracked: true
+    paths:
+    - dist/
+  script:
+    - npx tsc
+    - sh bin/install_assets.sh $CI_COMMIT_TAG $CI_COMMIT_TAG
+  only:
+    - tags
+      master
+  except:
+    - branches
+
+Build Chrome Beta Extension:
+  stage: build
+  artifacts:
+    name: "${CI_COMMIT_REF_SLUG}_${CI_COMMIT_REF_NAME}"
+    untracked: true
+    paths:
+    - dist/
+  script:
+    - npx tsc
+    - sh bin/install_assets.sh "${CI_COMMIT_SHA:8}-beta" $(date +%Y.%-m.%-d)
+  only:
+    - develop
+  except:
+    - branches
