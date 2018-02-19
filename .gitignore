@@ -1,3 +1,6 @@
 .idea
+.yarn
 *.sublime-workspace
 node_modules
+dist/*
+!dist/.git-keep

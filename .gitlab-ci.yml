@@ -1,7 +1,14 @@
 image: node:9.5
 
+cache:
+  untracked: true
+  key: "$CI_PROJECT_ID"
+  paths:
+    - .yarn
+
 before_script:
-  - npm install 
+  - yarn config set cache-folder .yarn
+  - yarn install 
 
 stages:
   - lint
