@@ -27,7 +27,7 @@ export default class IssueViewer {
         });
 
         Promise.all(searchPromises).then((values: ISearchSuggestion[][]) => {
-            console.log('done');
+            // temp
         }) ;
 
     }
